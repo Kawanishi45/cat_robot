@@ -11,7 +11,7 @@ import (
 func CreateLog() (fileName string, err error) {
   // ai_2024_0205_1455.log の形式で.logファイルを作成する
   currentTime := time.Now()
-  fileName = fmt.Sprintf("ai_%d_%02d%02d_%02d%02d.log",
+  fileName = fmt.Sprintf(constants.AiLogPath+"ai_%d_%02d%02d_%02d%02d.log",
     currentTime.Year(), currentTime.Month(), currentTime.Day(),
     currentTime.Hour(), currentTime.Minute())
   var file *os.File
