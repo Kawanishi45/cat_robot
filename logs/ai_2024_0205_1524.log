@@ -1,0 +1,108 @@
+system:
+user:aa
+------------------
+リクエスト
+Raw response:{
+  "id": "chatcmpl-8omgm1zzZqMavvNHj2UWG6p5VaI3p",
+  "object": "chat.completion",
+  "created": 1707114252,
+  "model": "gpt-3.5-turbo-0613",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "Hello! How can I assist you today?"
+      },
+      "logprobs": null,
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 12,
+    "completion_tokens": 9,
+    "total_tokens": 21
+  },
+  "system_fingerprint": null
+}
+
+system:
+user:aa
+------------------
+Hello! How can I assist you today?
+system:
+user:aa
+assistant:Hello! How can I assist you today?
+user:aa
+------------------
+リクエスト
+Raw response:{
+  "id": "chatcmpl-8omgofdN8Dx7hO7596D2CjeboaQez",
+  "object": "chat.completion",
+  "created": 1707114254,
+  "model": "gpt-3.5-turbo-0613",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "I apologize for any confusion, but could you please provide more details or let me know how I can help you?"
+      },
+      "logprobs": null,
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 30,
+    "completion_tokens": 23,
+    "total_tokens": 53
+  },
+  "system_fingerprint": null
+}
+
+system:
+user:aa
+assistant:Hello! How can I assist you today?
+user:aa
+------------------
+I apologize for any confusion, but could you please provide more details or let me know how I can help you?
+system:
+user:aa
+assistant:Hello! How can I assist you today?
+user:aa
+assistant:I apologize for any confusion, but could you please provide more details or let me know how I can help you?
+user:aa
+------------------
+リクエスト
+Raw response:{
+  "id": "chatcmpl-8omgrPd4XuAeo9wNwS1c2eKRHumwB",
+  "object": "chat.completion",
+  "created": 1707114257,
+  "model": "gpt-3.5-turbo-0613",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "I'm sorry, but I can't understand your request. If you have any specific question or need assistance with something, please let me know and I'll be happy to help."
+      },
+      "logprobs": null,
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 62,
+    "completion_tokens": 36,
+    "total_tokens": 98
+  },
+  "system_fingerprint": null
+}
+
+system:
+user:aa
+assistant:Hello! How can I assist you today?
+user:aa
+assistant:I apologize for any confusion, but could you please provide more details or let me know how I can help you?
+user:aa
+------------------
+I'm sorry, but I can't understand your request. If you have any specific question or need assistance with something, please let me know and I'll be happy to help.
