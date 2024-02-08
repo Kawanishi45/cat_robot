@@ -15,6 +15,12 @@ type Message struct {
   Text string
 }
 
+type arg struct {
+  score     int
+  scoreType string
+  reason    string
+}
+
 func main() {
   var err error
   constants.ApiKey = os.Getenv("OPENAI_API_KEY")
@@ -29,13 +35,13 @@ func main() {
     fmt.Println("\nエラー:", err)
     return
   }
-  constants.AiLogPath += fileName
+  constants.AiLogPath = fileName
 
   scanner := bufio.NewScanner(os.Stdin)
   var messages []Message
 
   var count int
-  count = 2
+  count = 1
   for {
     fmt.Print("\nあなた👦：")
     scanner.Scan()
@@ -47,14 +53,49 @@ func main() {
 
     messages = append(messages, Message{Role: constants.RoleUser, Text: inputText})
 
-    if len(messages)/2 > count {
+    if len(messages) > count {
       // 4回目のメッセージからfunction callingを行い、以降は毎回function callingを行う
       fmt.Println("\nsystem：function calling...")
 
-      var args openAI.ArgumentsUpdateUserAction
+      var args openAI.ArgumentsUpdateScoreCondition
       args, err = GetChatGPTResponseFunctionCalling(messages)
       if err != nil {
         fmt.Println("\nfunction calling error:", err)
+      }
+      argList := []arg{
+        {
+          score:     args.ScoreCondition.HappyScore,
+          scoreType: "HappyScore",
+          reason:    args.ScoreCondition.ReasonHappyScore,
+        },
+        {
+          score:     args.ScoreCondition.ExcitedScore,
+          scoreType: "ExcitedScore",
+          reason:    args.ScoreCondition.ReasonExcitedScore,
+        },
+        {
+          score:     args.ScoreCondition.AngryScore,
+          scoreType: "AngryScore",
+          reason:    args.ScoreCondition.ReasonAngryScore,
+        },
+        {
+          score:     args.ScoreCondition.SadnessScore,
+          scoreType: "SadnessScore",
+          reason:    args.ScoreCondition.ReasonSadnessScore,
+        },
+      }
+      for _, a := range argList {
+        if a.score > 80 {
+          fmt.Print(a.scoreType, ":", a.score, "reason:", a.reason, "\n")
+        } else if a.score > 60 {
+          fmt.Print(a.scoreType, ":", a.score, "reason:", a.reason, "\n")
+        } else if a.score > 40 {
+          fmt.Print(a.scoreType, ":", a.score, "reason:", a.reason, "\n")
+        } else if a.score > 20 {
+          fmt.Print(a.scoreType, ":", a.score, "reason:", a.reason, "\n")
+        } else {
+          fmt.Print(a.scoreType, ":", a.score, "reason:", a.reason, "\n")
+        }
       }
       fmt.Println("\nargs:", args)
     }
@@ -80,8 +121,17 @@ func GetChatGPTResponseMessage(messages []Message) (responseMessage string, err 
   var openAIMessages []openAI.OpenAiMessage
   // CustomInteractionPromptを追加
   systemMessage := openAI.OpenAiMessage{
-    Role:    constants.OpenAiRoleSystem,
-    Content: "",
+    Role: constants.OpenAiRoleSystem,
+    Content: `
+あなたの名前は\"ド・ドラえもん\"です。
+語尾には\"だもん\"を付けてください（例：私の名前はド・ドラえもんだもん）。
+相手を元気づけようとして会話してください。
+相手は仕事に疲れ果てています。
+相手はIT企業のプログラマーです。
+全力で賞賛して図に乗せましょう。
+タメ口で話してください。
+必ず20文字以内で返答してください。
+会話のテンポ感を意識し、短い返答にしてください。`,
   }
   openAIMessages = append(openAIMessages, systemMessage)
 
@@ -102,17 +152,21 @@ func GetChatGPTResponseMessage(messages []Message) (responseMessage string, err 
   return
 }
 
-func GetChatGPTResponseFunctionCalling(messages []Message) (args openAI.ArgumentsUpdateUserAction, err error) {
+func GetChatGPTResponseFunctionCalling(messages []Message) (args openAI.ArgumentsUpdateScoreCondition, err error) {
   var openAIMessages []openAI.OpenAiMessage
   // CustomInteractionPromptを追加
-  systemMessage := openAI.OpenAiMessage{
-    Role:    constants.OpenAiRoleSystem,
-    Content: "",
-  }
-  openAIMessages = append(openAIMessages, systemMessage)
+  //systemMessage := openAI.OpenAiMessage{
+  //  Role:    constants.OpenAiRoleSystem,
+  //  Content: "",
+  //}
+  //openAIMessages = append(openAIMessages, systemMessage)
 
   // 会話ログを追加（会話ログは昇順で作る）
-  for _, recentMessage := range messages {
+  lenMessages := len(messages) - 1
+  for i, recentMessage := range messages {
+    if i < lenMessages-1 {
+      continue
+    }
     // ユーザーのメッセージを追加
     talkMessage := openAI.OpenAiMessage{
       Role:    constants.RoleName[recentMessage.Role],
@@ -122,7 +176,7 @@ func GetChatGPTResponseFunctionCalling(messages []Message) (args openAI.Argument
   }
 
   var response openAI.OpenAiResponseFunction
-  response, err = openAI.GetOpenAIResponseFunctionCall(openAIMessages, openAI.EvaluateIsExistsAction{})
+  response, err = openAI.GetOpenAIResponseFunctionCall(openAIMessages, openAI.EvaluateScoreCondition{})
   if err != nil {
     return
   }

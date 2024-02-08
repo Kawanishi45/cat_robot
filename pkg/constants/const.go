@@ -1,5 +1,7 @@
 package constants
 
+var OpenAiModel = OpenAiModelGpt4
+
 // const openAI API
 const (
   OpenAiModelGpt3Turbo = "gpt-3.5-turbo"
@@ -48,16 +50,8 @@ const (
   Function = "function"
   Object   = "object"
   Boolean  = "boolean"
+  Number   = "number"
   String   = "string"
-)
-
-// frequency
-const (
-  FrequencyEveryDay       = "every_day"
-  FrequencyEveryWeek      = "every_week"
-  FrequencyEveryOtherWeek = "every_other_week"
-  FrequencyEveryMonth     = "every_month"
-  FrequencyNone           = "none"
 )
 
 // OsType device
@@ -65,45 +59,27 @@ type OsType int
 
 // const functions of what is actions
 const (
-  FunctionNameUpdateIsExistsAction              = "update_user_action"
-  FunctionDescriptionUpdateIsExistsAction       = "update user's action. if user decide action, return true. if not, return false."
-  PropertyNameIsDecidedAction                   = "is_decided_action"
-  PropertyNameActionTitle                       = "action_title"
-  PropertyNameActionDetail                      = "action_detail"
-  PropertyNameIsDecidedActionFrequency          = "is_decided_action_frequency"
-  PropertyNameActionFrequency                   = "action_frequency"
-  PropertyNameIsDecidedActionDayOfWeek          = "is_decided_action_day_of_week"
-  PropertyNameActionDayOfWeek                   = "action_day_of_week"
-  PropertyNameIsDecidedActionTimeToStart        = "is_decided_action_time_to_start"
-  PropertyNameActionTimeToStart                 = "action_time_to_start"
-  PropertyDescriptionIsDecidedAction            = "Has the user decided on his or her action? (true or false)"
-  PropertyDescriptionActionTitle                = "about what user's action. action's title. very short sentence."
-  PropertyDescriptionActionDetail               = "about what user's action. action's detail. long sentence."
-  PropertyDescriptionIsDecidedActionFrequency   = "Has the user decided on his or her action's frequency? (true or false)"
-  PropertyDescriptionActionFrequency            = "about how often user do action. every day? every week? every other week? every month? etc..."
-  PropertyDescriptionIsDecidedActionDayOfWeek   = "Has the user decided on his or her action's day of week? (true or false)"
-  PropertyDescriptionActionDayOfWeek            = "about when day of week user do action. on Monday? on Tuesday? on Wednesday and Friday? etc..."
-  PropertyDescriptionIsSunday                   = "is user do action when sunday? (true or false)"
-  PropertyDescriptionIsMonday                   = "is user do action when monday? (true or false)"
-  PropertyDescriptionIsTuesday                  = "is user do action when tuesday? (true or false)"
-  PropertyDescriptionIsWednesday                = "is user do action when wednesday? (true or false)"
-  PropertyDescriptionIsThursday                 = "is user do action when thursday? (true or false)"
-  PropertyDescriptionIsFriday                   = "is user do action when friday? (true or false)"
-  PropertyDescriptionIsSaturday                 = "is user do action when saturday? (true or false)"
-  PropertyDescriptionIsDecidedActionTimeToStart = "Has the user decided on his or her action's time to start? (true or false)"
-  PropertyDescriptionActionTimeToStart          = "about when time to start user do action. format is[hour]:[minute]. if user don't decided, none. else if user already decided, 8:00 or 9:30 or 20:15 etc..."
+  FunctionNameScoreCondition            = "score_condition"
+  FunctionDescriptionCondition          = "相手の感情スコアを判定し、その結果を返します。"
+  PropertyNameScoreCondition            = "score_condition"
+  PropertyDescriptionScoreCondition     = "相手の感情スコアを判定し、その結果を返します。「幸せそうか」をhappy_score、「興奮しているか」をexcited_score、「怒っているか」をangry_score、「悲しいか」をsadness_scoreとして返します。"
+  PropertyDescriptionHappyScore         = "相手はどのくらい幸せそう? (最も不幸せなら0、最も幸せなら10)"
+  PropertyDescriptionReasonHappyScore   = "happy_scoreがその数値である根拠を20文字以内で説明してください。"
+  PropertyDescriptionExcitedScore       = "相手はどのくらい興奮している? (最も冷静なら0、最も興奮しているなら10)"
+  PropertyDescriptionReasonExcitedScore = "excited_scoreがその数値である根拠を20文字以内で説明してください。"
+  PropertyDescriptionAngryScore         = "相手はどのくらい怒っている? (最も怒っているなら0、最も穏やかなら10)"
+  PropertyDescriptionReasonAngryScore   = "angry_scoreがその数値である根拠を20文字以内で説明してください。"
+  PropertyDescriptionSadnessScore       = "相手はどのくらい悲しい? (最も楽観的なら0、最も悲観的なら10)"
+  PropertyDescriptionReasonSadnessScore = "sadness_scoreがその数値である根拠を20文字以内で説明してください。"
 )
-
-var ActionFrequencyEnum = []string{FrequencyEveryDay, FrequencyEveryWeek, FrequencyEveryOtherWeek, FrequencyEveryMonth, FrequencyNone}
 
 const (
 
   // ---------------------------function_calling用---------------------------
 
-  // FunctionCallWhatIsAction 【function_calling用】目標解像度が1でアクションをAIに判定させるプロンプト
-  FunctionCallWhatIsAction = `
-ここまでの会話ログから、userが自分自身の目標を実現するための日々の行動・アクションを決められているかを判定し、その結果を「update_user_action」functionをcallして送信してください。
-update_user_actionでは、ここまでの会話でuserが自身の行動を決める内容が見つかれば「IsDecidedAction」パラメータのbooleanを「true」に、見つからなければ「false」を指定し、
-「IsDecidedAction」パラメータのbooleanを「true」にする時は、行動の内容を「what_action」パラメータのstringに示してください。そうでない時は「what_action」パラメータは空文字で返してください。
+  FunctionCallScoreCondition = `
+ここまでの会話ログから、userの感情スコアがどのような状態にあるかを判定し、その結果を「score_condition」functionをcallして送信してください。
+score_conditionでは、ここまでの会話でuserの感情スコアがどのような状態にあるかを判定し、その結果を「HappyScore」「ExcitedScore」「AngryScore」「SadnessScore」の各パラメータに示してください。
+各パラメータの値は0から10の間の整数で、それぞれの感情スコアが高いほど10に近づくようにしてください。
 `
 )

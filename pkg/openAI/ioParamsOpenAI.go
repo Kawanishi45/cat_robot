@@ -6,10 +6,11 @@ type OpenAiRequest struct {
 }
 
 type OpenAiRequestFunctionCall struct {
-  Model      string          `json:"model"`
-  Messages   []OpenAiMessage `json:"messages"`
-  Tools      []ToolInterface `json:"tools"`
-  ToolChoice string          `json:"tool_choice"` // auto is default, but we'll be explicit
+  Model       string          `json:"model"`
+  Messages    []OpenAiMessage `json:"messages"`
+  Tools       []ToolInterface `json:"tools"`
+  ToolChoice  string          `json:"tool_choice"` // auto is default, but we'll be explicit
+  Temperature float64         `json:"temperature"`
 }
 
 type OpenAiResponse struct {
@@ -78,48 +79,35 @@ type Property struct {
   Description string `json:"description"`
 }
 
-type PropertyEnum struct {
-  Type        string   `json:"type"`
-  Description string   `json:"description"`
-  Enum        []string `json:"enum"`
-}
-
-type PropertyObject struct {
+type PropertyConditionObject struct {
   Type        string                   `json:"type"`
   Description string                   `json:"description"`
-  Properties  PropertiesBoolDaysOfWeek `json:"properties"`
+  Properties  PropertiesScoreCondition `json:"properties"`
 }
 
-type FunctionIsExistsAction struct {
-  Name        string                   `json:"name"`
-  Description string                   `json:"description"`
-  Parameters  ParametersIsExistsAction `json:"parameters"`
+type FunctionCondition struct {
+  Name        string              `json:"name"`
+  Description string              `json:"description"`
+  Parameters  ParametersCondition `json:"parameters"`
 }
 
-type ParametersIsExistsAction struct {
-  Type       string                   `json:"type"`
-  Properties PropertiesIsExistsAction `json:"properties"`
-  Required   []string                 `json:"required"`
+type ParametersCondition struct {
+  Type       string              `json:"type"`
+  Properties PropertiesCondition `json:"properties"`
+  Required   []string            `json:"required"`
 }
 
-type PropertiesIsExistsAction struct {
-  IsDecidedAction            Property       `json:"is_decided_action"`
-  ActionTitle                Property       `json:"action_title"`
-  ActionDetail               Property       `json:"action_detail"`
-  IsDecidedActionFrequency   Property       `json:"is_decided_action_frequency"`
-  ActionFrequency            PropertyEnum   `json:"action_frequency"`
-  IsDecidedActionDayOfWeek   Property       `json:"is_decided_action_day_of_week"`
-  ActionDayOfWeek            PropertyObject `json:"action_day_of_week"`
-  IsDecidedActionTimeToStart Property       `json:"is_decided_action_time_to_start"`
-  ActionTimeToStart          Property       `json:"action_time_to_start"`
+type PropertiesCondition struct {
+  Condition PropertyConditionObject `json:"score_condition"`
 }
 
-type PropertiesBoolDaysOfWeek struct {
-  IsSunday    Property `json:"is_sunday"`
-  IsMonday    Property `json:"is_monday"`
-  IsTuesday   Property `json:"is_tuesday"`
-  IsWednesday Property `json:"is_wednesday"`
-  IsThursday  Property `json:"is_thursday"`
-  IsFriday    Property `json:"is_friday"`
-  IsSaturday  Property `json:"is_saturday"`
+type PropertiesScoreCondition struct {
+  HappyScore         Property `json:"happy_score"`
+  ReasonHappyScore   Property `json:"reason_happy_score"`
+  ExcitedScore       Property `json:"excited_score"`
+  ReasonExcitedScore Property `json:"reason_excited_score"`
+  AngryScore         Property `json:"angry_score"`
+  ReasonAngryScore   Property `json:"reason_angry_score"`
+  SadnessScore       Property `json:"sadness_score"`
+  ReasonSadnessScore Property `json:"reason_sadness_score"`
 }

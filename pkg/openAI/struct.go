@@ -10,106 +10,59 @@ type EvaluateToolInterface interface {
   getFunctionName() string
 }
 
-// EvaluateIsExistsAction アクションが存在するかどうかを判定する
-type EvaluateIsExistsAction struct{}
+// EvaluateScoreCondition は、スコアによる条件を評価するための構造体
+type EvaluateScoreCondition struct{}
 
-func (e EvaluateIsExistsAction) getCustomPrompt() string {
-  return constants.FunctionCallWhatIsAction
+func (e EvaluateScoreCondition) getCustomPrompt() string {
+  return constants.FunctionCallScoreCondition
 }
-func (e EvaluateIsExistsAction) getTools() []ToolInterface {
+func (e EvaluateScoreCondition) getTools() []ToolInterface {
   return []ToolInterface{
     {
       Type: constants.Function,
-      Function: FunctionIsExistsAction{
-        Name:        constants.FunctionNameUpdateIsExistsAction,
-        Description: constants.FunctionDescriptionUpdateIsExistsAction,
-        Parameters: ParametersIsExistsAction{
+      Function: FunctionCondition{
+        Name:        constants.FunctionNameScoreCondition,
+        Description: constants.FunctionDescriptionCondition,
+        Parameters: ParametersCondition{
           Type: constants.Object,
-          Properties: PropertiesIsExistsAction{
-            IsDecidedAction: Property{
-              Type:        constants.Boolean,
-              Description: constants.PropertyDescriptionIsDecidedAction,
-            },
-            ActionTitle: Property{
-              Type:        constants.String,
-              Description: constants.PropertyDescriptionActionTitle,
-            },
-            ActionDetail: Property{
-              Type:        constants.String,
-              Description: constants.PropertyDescriptionActionDetail,
-            },
-            IsDecidedActionFrequency: Property{
-              Type:        constants.Boolean,
-              Description: constants.PropertyDescriptionIsDecidedActionFrequency,
-            },
-            ActionFrequency: PropertyEnum{
-              Type:        constants.String,
-              Description: constants.PropertyDescriptionActionFrequency,
-              Enum:        constants.ActionFrequencyEnum,
-            },
-            IsDecidedActionDayOfWeek: Property{
-              Type:        constants.Boolean,
-              Description: constants.PropertyDescriptionIsDecidedActionDayOfWeek,
-            },
-            ActionDayOfWeek: PropertyObject{
+          Properties: PropertiesCondition{
+            Condition: PropertyConditionObject{
               Type:        constants.Object,
-              Description: constants.PropertyDescriptionActionDayOfWeek,
-              Properties: PropertiesBoolDaysOfWeek{
-                IsSunday:    Property{Type: constants.Boolean, Description: constants.PropertyDescriptionIsSunday},
-                IsMonday:    Property{Type: constants.Boolean, Description: constants.PropertyDescriptionIsMonday},
-                IsTuesday:   Property{Type: constants.Boolean, Description: constants.PropertyDescriptionIsTuesday},
-                IsWednesday: Property{Type: constants.Boolean, Description: constants.PropertyDescriptionIsWednesday},
-                IsThursday:  Property{Type: constants.Boolean, Description: constants.PropertyDescriptionIsThursday},
-                IsFriday:    Property{Type: constants.Boolean, Description: constants.PropertyDescriptionIsFriday},
-                IsSaturday:  Property{Type: constants.Boolean, Description: constants.PropertyDescriptionIsSaturday},
+              Description: constants.PropertyDescriptionScoreCondition,
+              Properties: PropertiesScoreCondition{
+                HappyScore:         Property{Type: constants.Number, Description: constants.PropertyDescriptionHappyScore},
+                ReasonHappyScore:   Property{Type: constants.String, Description: constants.PropertyDescriptionReasonHappyScore},
+                ExcitedScore:       Property{Type: constants.Number, Description: constants.PropertyDescriptionExcitedScore},
+                ReasonExcitedScore: Property{Type: constants.String, Description: constants.PropertyDescriptionReasonExcitedScore},
+                AngryScore:         Property{Type: constants.Number, Description: constants.PropertyDescriptionAngryScore},
+                ReasonAngryScore:   Property{Type: constants.String, Description: constants.PropertyDescriptionReasonAngryScore},
+                SadnessScore:       Property{Type: constants.Number, Description: constants.PropertyDescriptionSadnessScore},
+                ReasonSadnessScore: Property{Type: constants.String, Description: constants.PropertyDescriptionReasonSadnessScore},
               },
-            },
-            IsDecidedActionTimeToStart: Property{
-              Type:        constants.Boolean,
-              Description: constants.PropertyDescriptionIsDecidedActionTimeToStart,
-            },
-            ActionTimeToStart: Property{
-              Type:        constants.String,
-              Description: constants.PropertyDescriptionActionTimeToStart,
             },
           },
           Required: []string{
-            constants.PropertyNameIsDecidedAction,
-            constants.PropertyNameActionTitle,
-            constants.PropertyNameActionDetail,
-            constants.PropertyNameIsDecidedActionFrequency,
-            constants.PropertyNameActionFrequency,
-            constants.PropertyNameIsDecidedActionDayOfWeek,
-            constants.PropertyNameActionDayOfWeek,
-            constants.PropertyNameIsDecidedActionTimeToStart,
-            constants.PropertyNameActionTimeToStart,
+            constants.PropertyNameScoreCondition,
           },
         },
       },
     },
   }
 }
-func (e EvaluateIsExistsAction) getFunctionName() string {
-  return constants.FunctionNameUpdateIsExistsAction
+func (e EvaluateScoreCondition) getFunctionName() string {
+  return constants.FunctionNameScoreCondition
 }
 
-type ArgumentsUpdateUserAction struct {
-  IsDecidedAction            bool                  `json:"is_decided_action"`
-  ActionTitle                string                `json:"action_title"`
-  ActionDetail               string                `json:"action_detail"`
-  IsDecidedActionFrequency   bool                  `json:"is_decided_action_frequency"`
-  ActionFrequency            string                `json:"action_frequency"`
-  IsDecidedActionDayOfWeek   bool                  `json:"is_decided_action_day_of_week"`
-  ActionDayOfWeek            ActionDayOfWeekObject `json:"action_day_of_week"`
-  IsDecidedActionTimeToStart bool                  `json:"is_decided_action_time_to_start"`
-  ActionTimeToStart          string                `json:"action_time_to_start"`
+type ArgumentsUpdateScoreCondition struct {
+  ScoreCondition ScoreConditionObject `json:"score_condition"`
 }
-type ActionDayOfWeekObject struct {
-  IsSunday    bool `json:"is_sunday"`
-  IsMonday    bool `json:"is_monday"`
-  IsTuesday   bool `json:"is_tuesday"`
-  IsWednesday bool `json:"is_wednesday"`
-  IsThursday  bool `json:"is_thursday"`
-  IsFriday    bool `json:"is_friday"`
-  IsSaturday  bool `json:"is_saturday"`
+type ScoreConditionObject struct {
+  HappyScore         int    `json:"happy_score"`
+  ReasonHappyScore   string `json:"reason_happy_score"`
+  ExcitedScore       int    `json:"excited_score"`
+  ReasonExcitedScore string `json:"reason_excited_score"`
+  AngryScore         int    `json:"angry_score"`
+  ReasonAngryScore   string `json:"reason_angry_score"`
+  SadnessScore       int    `json:"sadness_score"`
+  ReasonSadnessScore string `json:"reason_sadness_score"`
 }

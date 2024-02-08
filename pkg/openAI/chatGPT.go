@@ -16,7 +16,7 @@ func GetOpenAIResponseTalk(messages []OpenAiMessage) (responseMessage string, er
 
   // OpenAI APIリクエストのJSONを作成
   requestBody := OpenAiRequest{
-    Model:    constants.OpenAiModelGpt3Turbo,
+    Model:    constants.OpenAiModel,
     Messages: messages,
   }
 
@@ -63,14 +63,16 @@ func GetOpenAIResponseFunctionCall(messages []OpenAiMessage, evaluateInterface E
 
   // OpenAI APIリクエストのJSONを作成
   requestBody := OpenAiRequestFunctionCall{
-    Model:      constants.OpenAiModelGpt3Turbo,
-    Messages:   messages,
-    Tools:      evaluateInterface.getTools(),
-    ToolChoice: "auto",
+    Model:       constants.OpenAiModel,
+    Messages:    messages,
+    Tools:       evaluateInterface.getTools(),
+    ToolChoice:  "auto",
+    Temperature: 0,
   }
 
-  //// AIに送信したメッセージをログに残す
-  //loging.SaveLog("Request:" + string(requestJSON))
+  // AIに送信したメッセージをログに残す
+  var responseContent string
+  defer logAi(requestBody.Messages, responseContent)
 
   requestJSON, err = json.Marshal(requestBody)
   if err != nil {
@@ -107,8 +109,6 @@ func GetOpenAIResponseFunctionCall(messages []OpenAiMessage, evaluateInterface E
     return response, errors.New(constants.ErrContentIsEmpty)
   }
 
-  // AIに送信したメッセージをログに残す
-  var responseContent string
   for i, choice := range response.Choices {
     responseContent += "Choices[" + strconv.Itoa(i) + "].Messages.Content:" + choice.Messages.Content + "\n"
     for j, toolcall := range choice.Messages.ToolCalls {
@@ -116,7 +116,6 @@ func GetOpenAIResponseFunctionCall(messages []OpenAiMessage, evaluateInterface E
     }
   }
   responseContent += "TotalTokens:" + strconv.Itoa(response.Usages.TotalTokens) + "\n"
-  logAi(requestBody.Messages, responseContent)
 
   if response.Choices[0].Messages.ToolCalls[0].Function.Name != evaluateInterface.getFunctionName() {
     return response, errors.New("function name is not " + evaluateInterface.getFunctionName())
